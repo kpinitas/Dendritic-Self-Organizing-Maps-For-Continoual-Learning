@@ -27,34 +27,28 @@ mpl.rcParams['text.usetex'] = True
 plt.style.use("seaborn-colorblind")
 
 
-def plot_fig(key, k, data, fig_counter):
+def plot_hyperparameter_fig(key, k, data, fig_counter):
     """
-    Plot figures found in Pinitas et al.
+    Plot hyperparameter-related figures found in Pinitas et al.
 
     Parameters
     ----------
-    key : TYPE
-        DESCRIPTION.
-    k : TYPE
-        DESCRIPTION.
-    data : TYPE
-        DESCRIPTION.
-    fig_counter : TYPE
-        DESCRIPTION.
+    key : string.
+    k : string
+    data : dict
+    fig_counter : int
 
     Returns
     -------
-    fig_counter : TYPE
-        DESCRIPTION.
-    sv : TYPE
-        DESCRIPTION.
+    fig_counter : int
+    sv : boolean
 
     """
     sv = False
 
     if key == 'classification':
         if k == 'alpha':
-            plt.title('Unsupervised Classification (MNIST)', fontsize=20)
+            plt.title('Classification (MNIST)', fontsize=20)
             plt.xlabel('$a_0$')
             plt.ylabel('Top-1 Accuracy')
             x = data[key][k]['alphas'][0]
@@ -63,7 +57,7 @@ def plot_fig(key, k, data, fig_counter):
             fig_counter = fig_counter + 1
             sv = True
         elif k == 'dendrites':
-            plt.title('Unsupervised Classification (MNIST)', fontsize=20)
+            plt.title('Classification (MNIST)', fontsize=20)
             plt.xlabel('number of units per map')
             plt.ylabel('Top-1 Accuracy')
             x = data[key][k]['dendrites']
@@ -75,7 +69,7 @@ def plot_fig(key, k, data, fig_counter):
             plt.legend(['DendSOM', 'SOM'], frameon='False')
             sv = True
         elif k == 'rf_size':
-            plt.title('Unsupervised Classification (MNIST)', fontsize=20)
+            plt.title('Classification (MNIST)', fontsize=20)
             plt.xlabel('receptive field size')
             plt.ylabel('Top-1 Accuracy')
             x = np.array(data[key][k]['ptchs'])[:, 0].tolist()
@@ -142,11 +136,68 @@ def plot_fig(key, k, data, fig_counter):
     return fig_counter, sv
 
 
+
+
+
+def plot_performance_fig(key, k, data, fig_counter):
+    """
+    Plot CL performance-related figures found in Pinitas et al.
+
+    Parameters
+    ----------
+    key : string.
+    k : string
+    data : dict
+    fig_counter : int
+
+    Returns
+    -------
+    fig_counter : int
+    sv : boolean
+
+    """
+    sv = False
+    x=list(range(5))
+    if key == 'incr_class':
+        if k == 'mnist':
+            plt.title('Class-IL (Split-MNIST)', fontsize=20)
+        else:
+            plt.title('Class-IL (Split-CIFAR-10)', fontsize=20)
+    elif key == 'incr_dom':    
+        plt.title('Domain-IL (Split-MNIST)', fontsize=20)
+    else:    
+        plt.title('Task-IL (Split-MNIST)', fontsize=20)
+            
+        
+    plt.xlabel('number of tasks')
+    plt.ylabel('Top-1 Accuracy')
+    
+    dendsom = data[key][k]['dendsom']['cos']['mean']
+    csom = data[key][k]['som']['cos']['mean']
+    esom = data[key][k]['som']['euc']['mean']
+    
+    
+    
+    plt.plot(x, dendsom)
+    plt.plot(x, csom)
+    plt.plot(x, esom)
+    plt.legend(['$DendSOM$','$SOM_{cos}$','$SOM_{euc}$'], frameon='False')
+    plt.show()
+    fig_counter = fig_counter + 1
+    sv = True
+    return fig_counter, sv
+
+
+
+
+
+
+
 # Define key parameters
 PATH = './figures/'
 EXT = '.pdf'
 
-# Load the data
+# Load the data (hyperparameters)
 with open(r"fig_data.pickle", "rb") as input_file:
     data = pickle.load(input_file)
 
@@ -155,7 +206,22 @@ for key in data.keys():
     for k in data[key].keys():
         fig = plt.figure(fig_counter)
 
-        fig_counter, sv = plot_fig(key, k, data, fig_counter)
+        fig_counter, sv = plot_hyperparameter_fig(key, k, data, fig_counter)
+        if sv:
+            sname = PATH + key + '_' + k + EXT
+            fig.savefig(sname, dpi=300)
+
+
+# Load the data (CL performance)
+with open(r"performance_data.pickle", "rb") as input_file:
+    data = pickle.load(input_file)
+
+
+fig_counter += 1
+for key in data.keys():
+    for k in data[key].keys():
+        fig = plt.figure(fig_counter)
+        fig_counter, sv = plot_performance_fig(key, k, data, fig_counter)
         if sv:
             sname = PATH + key + '_' + k + EXT
             fig.savefig(sname, dpi=300)
