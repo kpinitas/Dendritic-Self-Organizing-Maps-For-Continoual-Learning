@@ -54,7 +54,7 @@ def plot_fig(key, k, data, fig_counter):
 
     if key == 'classification':
         if k == 'alpha':
-            plt.title('Unsupervised Classification (MNIST)', fontsize=20)
+            # plt.title('Unsupervised Classification (MNIST)', fontsize=20)
             plt.xlabel('$a_0$')
             plt.ylabel('Top-1 Accuracy')
             x = data[key][k]['alphas'][0]
@@ -63,7 +63,7 @@ def plot_fig(key, k, data, fig_counter):
             fig_counter = fig_counter + 1
             sv = True
         elif k == 'dendrites':
-            plt.title('Unsupervised Classification (MNIST)', fontsize=20)
+            # plt.title('Unsupervised Classification (MNIST)', fontsize=20)
             plt.xlabel('number of units per map')
             plt.ylabel('Top-1 Accuracy')
             x = data[key][k]['dendrites']
@@ -75,7 +75,7 @@ def plot_fig(key, k, data, fig_counter):
             plt.legend(['DendSOM', 'SOM'], frameon='False')
             sv = True
         elif k == 'rf_size':
-            plt.title('Unsupervised Classification (MNIST)', fontsize=20)
+            # plt.title('Unsupervised Classification (MNIST)', fontsize=20)
             plt.xlabel('receptive field size')
             plt.ylabel('Top-1 Accuracy')
             x = np.array(data[key][k]['ptchs'])[:, 0].tolist()
@@ -85,7 +85,7 @@ def plot_fig(key, k, data, fig_counter):
             sv = True
     elif key == 'continual':
         if k == 'a_crit':
-            plt.title('Class-IL (Split-Protocol)', fontsize=20)
+            # plt.title('Class-IL (Split-Protocol)', fontsize=20)
             plt.xlabel('$a_{crit}$')
             plt.ylabel('Top-1 Accuracy')
             x = np.log(data[key][k]['ac'][0])
@@ -97,7 +97,7 @@ def plot_fig(key, k, data, fig_counter):
             sv = True
             fig_counter = fig_counter + 1
         elif k == 'r_exp':
-            plt.title('Class-IL (Split-Protocol)', fontsize=20)
+            # plt.title('Class-IL (Split-Protocol)', fontsize=20)
             plt.xlabel('$r_{exp}$')
             plt.ylabel('Top-1 Accuracy')
             x = data[key][k]['rx'][0]
@@ -114,10 +114,10 @@ def plot_fig(key, k, data, fig_counter):
         if k == 'alpha' or k == 'sigma':
             y = data[key][k]
             if k == 'alpha':
-                plt.title('Learning rate decay', fontsize=20)
+                # plt.title('Learning rate decay', fontsize=20)
                 plt.ylabel('$a(t)$')
             else:
-                plt.title('Neighbourhood radius decay', fontsize=20)
+                # plt.title('Neighbourhood radius decay', fontsize=20)
                 plt.ylabel('$\sigma (t)$')
             plt.xlabel('training step')
             for ii in range(len(y)):
@@ -130,7 +130,7 @@ def plot_fig(key, k, data, fig_counter):
         x = data[key]['d']
         if k == 'h':
             y = data[key]['h']
-            plt.title('Neighbourhood function decay', fontsize=20)
+            # plt.title('Neighbourhood function decay', fontsize=20)
             plt.ylabel('$h(t)$')
             plt.xlabel('distance from BMU')
             for ii in range(len(y)):
@@ -200,6 +200,22 @@ for key in data.keys():
         fig = plt.figure(fig_counter)
 
         fig_counter, sv = plot_fig(key, k, data, fig_counter)
+        if sv:
+            sname = PATH + key + '_' + k + EXT
+            fig.savefig(sname, dpi=300)
+
+
+# Load the data
+with open(r"performance_data.pickle", "rb") as handle:
+    performance_data = pickle.load(handle)
+
+fig_counter = 0
+for key in performance_data.keys():
+    for k in performance_data[key].keys():
+        fig = plt.figure(fig_counter)
+
+        fig_counter, sv = plot_performance_fig(key, k, performance_data,
+                                               fig_counter)
         if sv:
             sname = PATH + key + '_' + k + EXT
             fig.savefig(sname, dpi=300)
