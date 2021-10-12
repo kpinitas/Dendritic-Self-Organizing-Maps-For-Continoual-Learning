@@ -6,11 +6,12 @@ Created on Mon Sep 20 03:54:27 2021.
 @author: kpinitas
 """
 
-import numpy as np
-from matplotlib import pyplot as plt
 import pickle
+import numpy as np
 import matplotlib as mpl
+from matplotlib import pyplot as plt
 
+# Drawing paraemeters
 mpl.rcParams['axes.spines.right'] = False
 mpl.rcParams['axes.spines.top'] = False
 mpl.rcParams["figure.autolayout"] = True
