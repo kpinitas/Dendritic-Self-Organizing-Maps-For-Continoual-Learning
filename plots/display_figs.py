@@ -6,13 +6,16 @@ Created on Mon Sep 20 03:54:27 2021.
 @author: kpinitas
 """
 
+import os
+import pickle
 import numpy as np
 from matplotlib import pyplot as plt
-import pickle
-import matplotlib as mpl
 
 # color pallette
 plt.style.use("seaborn-colorblind")
+
+if not os.path.exists('figures/'):
+    os.mkdir('figures/')
 
 tex_fonts = {
     # Use LaTeX to write all text
@@ -234,7 +237,7 @@ def plot_performance_fig(key, k, data, fig_counter):
 
 
 # Define key parameters
-PATH = './figures/'
+PATH = 'figures/'
 EXT = 'pdf'
 
 # Load the data
@@ -249,7 +252,7 @@ for key in data.keys():
 
         fig_counter, sv = plot_fig(key, k, data, fig_counter)
         if sv:
-            sname = PATH + key + '_' + k + '.' + EXT
+            sname = f"{PATH}{key}_{k}.{EXT}"
             fig.savefig(sname, dpi=300, format=EXT, bbox_inches='tight')
 
 
@@ -257,13 +260,14 @@ for key in data.keys():
 with open(r"performance_data.pickle", "rb") as handle:
     performance_data = pickle.load(handle)
 
-fig_counter = 0
+# fig_counter = 0
 for key in performance_data.keys():
     for k in performance_data[key].keys():
-        fig = plt.figure(fig_counter)
+        fig = plt.figure(num=fig_counter,
+                         figsize=set_size(width=345, fraction=1.0))
 
         fig_counter, sv = plot_performance_fig(key, k, performance_data,
                                                fig_counter)
         if sv:
-            sname = PATH + key + '_' + k + EXT
+            sname = f"{PATH}{key}_{k}.{EXT}"
             fig.savefig(sname, dpi=300)
