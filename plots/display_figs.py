@@ -11,11 +11,14 @@ import pickle
 import numpy as np
 from matplotlib import pyplot as plt
 
+# Define key parameters
+PATH = 'figures/'
+EXT = 'pdf'
+if not os.path.exists(PATH):
+    os.mkdir(PATH)
+
 # color pallette
 plt.style.use("seaborn-colorblind")
-
-if not os.path.exists('figures/'):
-    os.mkdir('figures/')
 
 tex_fonts = {
     # Use LaTeX to write all text
@@ -23,14 +26,14 @@ tex_fonts = {
     "font.family": "serif",
     "font.weight": "bold",
     # Use 10pt font in plots, to match 10pt font in document
-    "axes.labelsize": 16,
-    "font.size": 16,
+    "axes.labelsize": 14,
+    "font.size": 14,
     # Make the legend/label fonts a little smaller
-    "legend.fontsize": 14,
-    "xtick.labelsize": 14,
-    "ytick.labelsize": 14,
+    "legend.fontsize": 12,
+    "xtick.labelsize": 12,
+    "ytick.labelsize": 12,
     "axes.linewidth": 2.5,
-    "lines.markersize": 20.0,
+    "lines.markersize": 12.0,
     "lines.linewidth": 3.5,
     "xtick.major.width": 2.2,
     "ytick.major.width": 2.2,
@@ -236,10 +239,6 @@ def plot_performance_fig(key, k, data, fig_counter):
     return fig_counter, sv
 
 
-# Define key parameters
-PATH = 'figures/'
-EXT = 'pdf'
-
 # Load the data
 with open(r"fig_data.pickle", "rb") as input_file:
     data = pickle.load(input_file)
@@ -260,7 +259,6 @@ for key in data.keys():
 with open(r"performance_data.pickle", "rb") as handle:
     performance_data = pickle.load(handle)
 
-# fig_counter = 0
 for key in performance_data.keys():
     for k in performance_data[key].keys():
         fig = plt.figure(num=fig_counter,
